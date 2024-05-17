@@ -18,7 +18,7 @@ DoubleList<T>::Iterator::Iterator(Node* node) : ptr(node){}
 template <typename T>
 typename DoubleList<T>::Iterator& DoubleList<T>::Iterator::operator=(const Iterator& it)
 {
-    ptr = it->ptr;
+    ptr = it.ptr;
 
     return *this;
 }
@@ -191,6 +191,80 @@ void DoubleList<T>::pop_back()
 }
 
 template <typename T>
+typename DoubleList<T>::Iterator DoubleList<T>::insert(Iterator it, const T& val)
+{
+    if (it.ptr == head)
+    {
+        push_front(val);
+    }
+
+    else if (!(it.ptr))
+    {
+        push_back(val);
+    }
+
+    else
+    {
+        Node* prev = it.ptr->prev;
+        Node* new_node = new Node(val);
+        prev->next = new_node;
+        it.ptr->prev = new_node;
+
+        new_node->next = it.ptr;
+        new_node->prev = prev;
+    }
+
+    return it;
+}
+
+template <typename T>
+typename DoubleList<T>::Iterator DoubleList<T>::insert(Iterator it, const std::initializer_list<T>& list)
+{
+    for (T elem : list)
+    {
+        it = insert(it, elem);
+    }
+
+    return it;
+}
+
+template <typename T>
+typename DoubleList<T>::Iterator DoubleList<T>::erase(Iterator it)
+{
+    if (it.ptr == head)
+    {
+        pop_front();
+        return Iterator(head);
+    }
+
+    else if (it.ptr == tail)
+    {
+        pop_back();
+        return Iterator(tail);
+    }
+
+    Node* prev = it.ptr->prev;
+    Node* next = it.ptr->next;
+
+    prev->next = next;
+    next->prev = prev;
+    
+    delete it.ptr;
+    return Iterator(next);
+}
+
+template <typename T>
+typename DoubleList<T>::Iterator DoubleList<T>::erase(Iterator start, Iterator end)
+{
+    for (; start != end;)
+    {
+        start = erase(start);
+    }
+    
+    return start;
+}
+
+template <typename T>
 void DoubleList<T>::copy(const DoubleList& list)
 {
     clear();
@@ -226,6 +300,26 @@ void DoubleList<T>::clear()
     }
 
     tail = nullptr;
+}
+
+template <typename T>
+void DoubleList<T>::reverse()
+{
+    Node* node = head;
+    while (node)
+    {
+        std::swap(node->prev, node->next);
+        node = node->prev;
+    }
+
+    std::swap(head, tail);
+}
+
+template <typename T>
+void DoubleList<T>::swap(DoubleList<T>& list)
+{
+    std::swap(head, list.head);
+    std::swap(tail, list.tail);
 }
 
 template <typename T>

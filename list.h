@@ -19,7 +19,6 @@ private:
         ~Node() = default;
     };
 
-public:
     class Iterator {
 	public:
 		Iterator(Node* node = nullptr);
@@ -35,9 +34,11 @@ public:
 		bool operator==(const Iterator& it) const;
 		bool operator!=(const Iterator& it) const;
 
-    private:
+    protected:
 		Node* ptr;
-};
+    
+        friend class DoubleList;
+    };
 
 public:
     DoubleList();
@@ -54,10 +55,19 @@ public:
     void pop_back();
     void pop_front();
 
+    Iterator insert(Iterator it, const T& val);
+    Iterator insert(Iterator it, const std::initializer_list<T>& list);
+    Iterator erase(Iterator it);
+    Iterator erase(Iterator start, Iterator end);
+
     void copy(const DoubleList& list);
     void copy(DoubleList&& list);
 
     void clear();
+
+    void reverse();
+
+    void swap(DoubleList& list);
 
     Iterator begin() const;
     Iterator end() const;
